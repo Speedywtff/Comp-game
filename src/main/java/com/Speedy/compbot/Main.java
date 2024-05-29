@@ -15,7 +15,7 @@ public class Main {
         String Token = "hidden";  //bot token, will change into an env later
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(Token); //Builds the shard, which is what runs multiple instances
         builder.setStatus(OnlineStatus.ONLINE); //Appears Online
-        builder.setActivity(Activity.playing("IntelliJ" )); //Funsies
+        builder.setActivity(Activity.playing("IntelliJ")); //Funsies
         shardmanager = builder.build(); //Builds it, sets all properties. Throws login exception if token incorrect
 
     }

@@ -10,10 +10,12 @@ import javax.security.auth.login.LoginException;
 
 public class Main {
 
+    private final Dotenv config;
     private final ShardManager shardmanager;
     public Main() throws LoginException {
-        String Token = "hidden";  //bot token, will change into an env later
-        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(Token); //Builds the shard, which is what runs multiple instances
+        config = Dotenv.configure().load();
+        String token = config.get("TOKEN");
+        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token); //Builds the shard, which is what runs multiple instances
         builder.setStatus(OnlineStatus.ONLINE); //Appears Online
         builder.setActivity(Activity.playing("IntelliJ")); //Funsies
         shardmanager = builder.build(); //Builds it, sets all properties. Throws login exception if token incorrect

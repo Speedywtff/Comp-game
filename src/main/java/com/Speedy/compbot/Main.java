@@ -21,7 +21,7 @@ public class Main {
         builder.setActivity(Activity.playing("IntelliJ")); //Funsies
         builder.enableIntents(GatewayIntent.DIRECT_MESSAGES); //On discords app dev portal
         shardmanager = builder.build(); //Builds it, sets all properties. Throws login exception if token incorrect
-
+        //shardmanager.addEventListener(new eventlistener(), new CommandManager()); for listening to future events and commands
     }
     public ShardManager getShardmanager(){
         return shardmanager;

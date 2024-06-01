@@ -1,5 +1,6 @@
 package com.Speedy.compbot.commands;
 
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,11 +13,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandManager extends ListenerAdapter {
+    private ArrayList<Member> members;
+    private ArrayList<Member> challenger;
+    public CommandManager(){
+        this.members = new ArrayList<>();
+        this.challenger = new ArrayList<>();
+    }
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String command = event.getName();
         if(command.equalsIgnoreCase("play")){
-            event.reply("Tagged: " +  event.getOption("user").getAsMember().getAsMention()).queue();
+            event.reply(event.getOption("user").getAsMember().getAsMention() + ", you are challenged to a game. Use the accept command to accept.").queue();
+            members.add(event.getOption("user").getAsMember());
+            challenger.add(event.getMember());
+        } else if(command.equalsIgnoreCase("accept")){
+            Member user = event.getMember();
+            if(members.contains(user)){
+                int i = members.indexOf(user);
+                event.reply("Game has started! The players are: " + user.getAsMention() + " and " + members.get(i).getAsMention()).queue();
+            }
         }
     }
 
@@ -25,7 +40,9 @@ public class CommandManager extends ListenerAdapter {
         List<CommandData> commands = new ArrayList<>();
         OptionData user = new OptionData(OptionType.USER, "user", "user to start a game with", true);
         commands.add(Commands.slash("play", "Start a game").addOptions(user));
+        commands.add(Commands.slash("accept", "accept a challenge"));
 
         event.getGuild().updateCommands().addCommands(commands).queue();
     }
+
 }

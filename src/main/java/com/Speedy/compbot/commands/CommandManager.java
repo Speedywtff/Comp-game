@@ -38,8 +38,10 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onGuildReady(GuildReadyEvent event) { //register commands to guild when loaded
         List<CommandData> commands = new ArrayList<>();
-        OptionData user = new OptionData(OptionType.USER, "user", "user to start a game with", true);
-        commands.add(Commands.slash("play", "Start a game").addOptions(user));
+        OptionData user = new OptionData(OptionType.USER, "Player 2", "user to start a game with", true);
+        OptionData user2 = new OptionData(OptionType.USER, "Player 3", "user to start a game with");
+        OptionData user3 = new OptionData(OptionType.USER, "Player 4", "user to start a game with");
+        commands.add(Commands.slash("play", "Start a game").addOptions(user, user2, user3));
         commands.add(Commands.slash("accept", "accept a challenge"));
 
         event.getGuild().updateCommands().addCommands(commands).queue();

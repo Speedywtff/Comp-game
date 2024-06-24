@@ -11,34 +11,44 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class CommandManager extends ListenerAdapter {
     private ArrayList<Member> members;
     private ArrayList<Member> challenger;
     public CommandManager(){
-        this.members = new ArrayList<>();
         this.challenger = new ArrayList<>();
     }
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String command = event.getName();
         if(command.equalsIgnoreCase("play")){
-//            event.reply(event.getOption("user").getAsMember().getAsMention() + ", you are challenged to a game. Use the accept command to accept.").queue();
-//            members.add(event.getOption("user").getAsMember());
-//            challenger.add(event.getMember());
             List<OptionMapping> OptionMembers = event.getOptions();
-            int amountofPlayers = OptionMembers.size();
-            Member[] players = new Member[amountofPlayers + 1];
-            int i = 0;
+            Member[] players = new Member[OptionMembers.size() + 1];
+            players[0] = event.getMember();
+            int i = 1;
             for(OptionMapping p: OptionMembers){
-                players[i] = p.getAsMember();
-                i++;
+                Member u = p.getAsMember();
+                    players[i] = u;
+                    i++;
             }
-            for(i = 0; i < players.length; i++){
+
+            for(i = 0; i < players.length; i++){ //remove this later
                 System.out.println(players[i]);
             }
-            event.reply("Done!").queue();  //Done
+            //check if challenged players are duplicated, reject if so.
+
+            boolean flag = checkduplicates(players);
+
+            if(flag){
+                for(i = 0; i < players.length; i++){ //This can probably be more efficient by using challenger from the start.
+                    challenger.add(players[i]);
+                }
+                event.reply("Invite sent.").queue();  //Accepted
+            } else {
+                event.reply("Invalid Arguments! Make sure members are not pinged more than once and you have not pinged a bot.").queue(); //Rejected due to duplication
+            }
 
 
         } else if(command.equalsIgnoreCase("accept")){
@@ -61,5 +71,24 @@ public class CommandManager extends ListenerAdapter {
 
         event.getGuild().updateCommands().addCommands(commands).queue();
     }
+
+    private boolean checkduplicates(Member[] players){ //efficiency pro max
+        HashSet<Member> set = new HashSet<>();
+
+        for(Member i: players){
+            if(i.getUser().isBot()){
+                return false;
+            }
+        }
+
+        for (Member member : players) {
+            if (!set.add(member)) {
+                return false; // Duplicate found
+            }
+        }
+
+        return true;
+    }
+
 
 }

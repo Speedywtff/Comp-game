@@ -15,11 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 
 public class CommandManager extends ListenerAdapter {
-    private ArrayList<Member> members;
-    private ArrayList<Member> challenger;
-    public CommandManager(){
-        this.challenger = new ArrayList<>();
-    }
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String command = event.getName();
@@ -42,16 +37,14 @@ public class CommandManager extends ListenerAdapter {
             boolean flag = checkduplicates(players);
 
             if(flag){
-                for(i = 0; i < players.length; i++){ //This can probably be more efficient by using challenger from the start.
-                    challenger.add(players[i]);
-                }
+                sendChallenge(players);
                 event.reply("Invite sent.").queue();  //Accepted
             } else {
                 event.reply("Invalid Arguments! Make sure members are not pinged more than once and you have not pinged a bot.").queue(); //Rejected due to duplication
             }
 
 
-        } else if(command.equalsIgnoreCase("accept")){
+        } else if(command.equalsIgnoreCase("accept")){ //change this
             Member user = event.getMember();
             if(members.contains(user)){
                 int i = members.indexOf(user);
@@ -72,23 +65,25 @@ public class CommandManager extends ListenerAdapter {
         event.getGuild().updateCommands().addCommands(commands).queue();
     }
 
+    private void sendChallenge(Member[] players){
+        for(int i = 1; i < players.length; i++){
+
+        }
+    }
+
+
     private boolean checkduplicates(Member[] players){ //efficiency pro max
         HashSet<Member> set = new HashSet<>();
-
         for(Member i: players){
             if(i.getUser().isBot()){
                 return false;
             }
         }
-
         for (Member member : players) {
             if (!set.add(member)) {
                 return false; // Duplicate found
             }
         }
-
         return true;
     }
-
-
 }
